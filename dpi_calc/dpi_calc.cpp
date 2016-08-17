@@ -14,6 +14,7 @@ int main(int argc, char **argv)
 
 	if (argc != 3) {
 		cerr << usage << endl;
+		exit(1);
 	}
 
 	string size = argv[1];
@@ -22,7 +23,16 @@ int main(int argc, char **argv)
 	size_t idx;
 	float s = stof(size);
 	float w = stof(resolution, &idx);
-	float h = stof(resolution.substr(idx + 1));
+	float h;
+	try {
+		h = stof(resolution.substr(idx + 1));
+	}
+	catch (out_of_range) {
+		throw out_of_range{"Missing height.\n" + usage};
+	}
+	catch (invalid_argument) {
+		throw invalid_argument{"Missing height.\n" + usage};
+	}
 
 	float dpi = calc_dpi(s, w, h);
 
